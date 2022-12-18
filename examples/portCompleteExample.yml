@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: port.ci-upsert-entity-complete.0.0.1
+  annotations:
+spec:
+  arguments:
+    parameters:
+  entrypoint: ci-tasks
+  templates:
+    - name: ci-tasks
+      metadata:
+        annotations:
+      dag:
+        tasks:
+          - name: entity-upsert
+            templateRef:
+              name: port
+              template: entity-upsert
+            arguments:
+              parameters:
+                - name: PORT_CLIENT_ID
+                  value: "YOUR_CLIENT_ID"
+                - name: PORT_CLIENT_SECRET
+                  value: "YOUR_CLIENT_ID"
+                - name: BLUEPRINT_IDENTIFIER
+                  value: "microservice"
+                - name: ENTITY_IDENTIFIER
+                  value: "morp-complete"
+                - name: ENTITY_TITLE
+                  value: "Morp-Argo-complete"
+                - name: ENTITY_TEAM
+                  value: "argo-admins"
+                - name: ENTITY_PROPERTIES
+                  value: |
+                    {
+                      "region": "eu-west-4", "count": 5
+                    }
+                - name: ENTITY_RELATIONS
+                  value: |
+                    {
+                      "multi": ["multi-test1", "multi-test2"], "ttl": "e_jEormlOuudmDeL7o"
+                    }
+                - name: ENTITY_ICON
+                  value: "Argo"
+          - name: entity-get
+            templateRef:
+              name: port
+              template: entity-get
+            arguments:
+              parameters:
+                - name: PORT_CLIENT_ID
+                  value: "YOUR_CLIENT_ID"
+                - name: PORT_CLIENT_SECRET
+                  value: "YOUR_CLIENT_SECRET"
+                - name: BLUEPRINT_IDENTIFIER
+                  value: "microservice" # Replace with your target blueprint identifier
+                - name: ENTITY_IDENTIFIER
+                  value: "morp" # Replace with your target entity identifier
+          - name: log-info
+            dependencies: [entity-upsert]
+            template: log-info
+            arguments:
+              parameters:
+                - name: INFO
+                  value: "{{workflow.outputs.parameters.PORT_ENTITY_IDENTIFIER}}"
+
+    - name: log-info
+      inputs:
+        parameters:
+          - name: INFO
+      script:
+        image: alpine:latest
+        command: ["/bin/sh"]
+        env:
+          - name: INFO
+            value: "{{ inputs.parameters.INFO }}"
+        source: |
+          set -e
+          echo ${INFO}

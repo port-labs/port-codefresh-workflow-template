@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: port.ci-upsert-entity.0.0.1
+  annotations:
+spec:
+  arguments:
+    parameters:
+  entrypoint: ci-tasks
+  templates:
+    - name: ci-tasks
+      metadata:
+        annotations:
+      dag:
+        tasks:
+          - name: entity-upsert
+            templateRef:
+              name: port
+              template: entity-upsert
+            arguments:
+              parameters:
+                - name: PORT_CLIENT_ID
+                  value: "YOUR_CLIENT_ID"
+                - name: PORT_CLIENT_SECRET
+                  value: "YOUR_CLIENT_SECRET"
+                - name: BLUEPRINT_IDENTIFIER
+                  value: "microservice"
+                - name: ENTITY_IDENTIFIER
+                  value: "morp"
+                - name: ENTITY_TITLE
+                  value: "Morp-Argo"
+                - name: ENTITY_PROPERTIES
+                  value: |
+                    {
+                      "region": "eu-west-4"
+                    }
+          - name: log-info
+            dependencies: [entity-upsert]
+            template: log-info
+            arguments:
+              parameters:
+                - name: INFO
+                  value: "{{workflow.outputs.parameters.PORT_ENTITY_IDENTIFIER}}"
+
+    - name: log-info
+      inputs:
+        parameters:
+          - name: INFO
+      script:
+        image: alpine:latest
+        command: ["/bin/sh"]
+        env:
+          - name: INFO
+            value: "{{ inputs.parameters.INFO }}"
+        source: |
+          set -e
+          echo ${INFO}
