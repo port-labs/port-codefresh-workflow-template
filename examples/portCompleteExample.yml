@@ -1,3 +1,4 @@
+# Create or update a Port Entity and then retrieve it and use it's data in subsequent workflow templates
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
@@ -63,7 +64,7 @@ spec:
             arguments:
               parameters:
                 - name: INFO
-                  value: "{{workflow.outputs.parameters.PORT_ENTITY_IDENTIFIER}}"
+                  value: "{{workflow.outputs.parameters.PORT_ENTITY_PROPERTIES}}"
 
     - name: log-info
       inputs:
