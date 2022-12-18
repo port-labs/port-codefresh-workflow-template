@@ -1,0 +1,122 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: port
+  annotations:
+spec:
+  templates:
+    - name: entity-get
+      serviceAccountName: port-executor
+      metadata:
+        annotations:
+          port/description: "Get a Port Entity according to the provided values"
+      inputs:
+        parameters:
+          # required
+          - name: PORT_CLIENT_ID
+            default: PORT_CLIENT_ID
+          - name: PORT_CLIENT_SECRET
+            default: PORT_CLIENT_SECRET
+          - name: BLUEPRINT_IDENTIFIER
+          - name: ENTITY_IDENTIFIER
+      container:
+        name: main
+        imagePullPolicy: Always
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:latest
+        command:
+          - node
+          - lib/index.js
+        env:
+          - name: OPERATION
+            value: "get"
+          - name: PORT_CLIENT_ID
+            value: "{{ inputs.parameters.PORT_CLIENT_ID }}"
+          - name: PORT_CLIENT_SECRET
+            value: "{{ inputs.parameters.PORT_CLIENT_SECRET }}"
+          - name: BLUEPRINT_IDENTIFIER
+            value: "{{ inputs.parameters.BLUEPRINT_IDENTIFIER }}"
+          - name: ENTITY_IDENTIFIER
+            value: "{{ inputs.parameters.ENTITY_IDENTIFIER }}"
+      outputs:
+        parameters:
+          - name: PORT_COMPLETE_ENTITY
+            valueFrom:
+              path: /tmp/portvars/PORT_COMPLETE_ENTITY
+            globalName: PORT_COMPLETE_ENTITY
+          - name: PORT_BLUEPRINT_IDENTIFIER
+            valueFrom:
+              path: /tmp/portvars/PORT_BLUEPRINT_IDENTIFIER
+            globalName: PORT_BLUEPRINT_IDENTIFIER
+          - name: PORT_ENTITY_IDENTIFIER
+            valueFrom:
+              path: /tmp/portvars/PORT_ENTITY_IDENTIFIER
+            globalName: PORT_ENTITY_IDENTIFIER
+          - name: PORT_ENTITY_TITLE
+            valueFrom:
+              path: /tmp/portvars/PORT_ENTITY_TITLE
+            globalName: PORT_ENTITY_TITLE
+          - name: PORT_ENTITY_PROPERTIES
+            valueFrom:
+              path: /tmp/portvars/PORT_ENTITY_PROPERTIES
+            globalName: PORT_ENTITY_PROPERTIES
+          - name: PORT_ENTITY_RELATIONS
+            valueFrom:
+              path: /tmp/portvars/PORT_ENTITY_RELATIONS
+            globalName: PORT_ENTITY_RELATIONS
+    - name: entity-upsert
+      serviceAccountName: port-executor
+      metadata:
+        annotations:
+          port/description: "Upsert a Port Entity according to the provided values"
+      inputs:
+        parameters:
+          # required
+          - name: PORT_CLIENT_ID
+          - name: PORT_CLIENT_SECRET
+          - name: BLUEPRINT_IDENTIFIER
+          - name: ENTITY_IDENTIFIER
+            default: ""
+          - name: ENTITY_TITLE
+            default: ""
+          - name: ENTITY_TEAM
+            default: ""
+          - name: ENTITY_ICON
+            default: ""
+          - name: ENTITY_PROPERTIES
+            default: ""
+          - name: ENTITY_RELATIONS
+            default: ""
+      container:
+        name: main
+        imagePullPolicy: Always
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:latest
+        command:
+          - node
+          - lib/index.js
+        env:
+          - name: OPERATION
+            value: "upsert"
+          - name: PORT_CLIENT_ID
+            value: "{{ inputs.parameters.PORT_CLIENT_ID }}"
+          - name: PORT_CLIENT_SECRET
+            value: "{{ inputs.parameters.PORT_CLIENT_SECRET }}"
+          - name: BLUEPRINT_IDENTIFIER
+            value: "{{ inputs.parameters.BLUEPRINT_IDENTIFIER }}"
+          - name: ENTITY_IDENTIFIER
+            value: "{{ inputs.parameters.ENTITY_IDENTIFIER }}"
+          - name: ENTITY_TITLE
+            value: "{{ inputs.parameters.ENTITY_TITLE }}"
+          - name: ENTITY_TEAM
+            value: "{{ inputs.parameters.ENTITY_TEAM }}"
+          - name: ENTITY_ICON
+            value: "{{ inputs.parameters.ENTITY_ICON }}"
+          - name: ENTITY_PROPERTIES
+            value: "{{ inputs.parameters.ENTITY_PROPERTIES }}"
+          - name: ENTITY_RELATIONS
+            value: "{{ inputs.parameters.ENTITY_RELATIONS }}"
+      outputs:
+        parameters:
+          - name: PORT_ENTITY_IDENTIFIER
+            valueFrom:
+              path: /tmp/portvars/PORT_ENTITY_IDENTIFIER
+            globalName: PORT_ENTITY_IDENTIFIER
