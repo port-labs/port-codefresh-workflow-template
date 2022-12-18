@@ -1,10 +1,12 @@
 # Port Codefresh workflow template
 
-This repository is composed of several pieces:
+This repository contains:
 
-1. The code for a docker image that can be used during an ArgoCD Workflow (or Codefresh workflow) to get an Entity or Upsert an Entity inside Port;
-2. A Workflow template definition that can be used with the docker image;
-3. Usage examples of the Workflow template as part of the ArgoCD workflow process.
+- The code for a docker image that can be used during an ArgoCD Workflow (or Codefresh workflow) to get an Entity or Upsert an Entity inside Port;
+- A Workflow template definition that can be used with the docker image;
+- The required service account, role and role binding definitions required to use the workflow template;
+- An example secret definition to provide a `CLIENT_ID` and `CLIENT_SECRET` to use the workflow template;
+- Usage examples of the Workflow template as part of the ArgoCD workflow process.
 
 The docker image is hosted and managed by Port, there is no need to build and host it yourself.
 
@@ -12,9 +14,10 @@ Use the provided examples to integrate Port with your existing ArgoCD and Codefr
 
 # Installation and usage
 
-- Copy and commit the [portWorkflowTemplate.yml](./portWorkflowTemplate.yml) file to your Codefresh git source.
-- Add the required service account, cluster role and role binding to your codefresh runtime namespace by using the command: `kubectl apply -f rbac.yml -n YOUR_NAMESPACE`
-- Use either the `entity-get` or `entity-upsert` template as shown in the [examples](./examples/)
+- Copy and commit the [portWorkflowTemplate.yml](./portWorkflowTemplate.yml) file to your Codefresh git source;
+- Add the required service account, cluster role and role binding to your codefresh runtime namespace by using the command: `kubectl apply -f rbac.yml -n YOUR_NAMESPACE`;
+- Add a secret to your cluster containing your `PORT_CLIENT_ID` and `PORT_CLIENT_SECRET` after encoding them in base64;
+- Use either the `entity-get` or `entity-upsert` template as shown in the [examples](./examples/).
 
 # Available templates
 
@@ -24,8 +27,9 @@ The `get-entity` template gets an existing Port Entity as part of the workflow, 
 
 ### Inputs
 
-- `PORT_CLIENT_ID` - a Port client ID;
-- `PORT_CLIENT_SECRET` - a Port client secret;
+- `PORT_CREDENTIALS_SECRET` - name of the secret to get the `CLIENT_ID` and `CLIENT_SECRET` from (default: `port-credentials`)
+- `PORT_CLIENT_ID_KEY` - key in the secret where the base64 encoded `PORT_CLIENT_ID` is stored (default: `PORT_CLIENT_ID`);
+- `PORT_CLIENT_SECRET_KEY` - key in the secret where the base64 encoded `PORT_CLIENT_SECRET` is stored (default `PORT_CLIENT_SECRET`);
 - `BLUEPRINT_IDENTIFIER` - identifier of the blueprint the target entity is from;
 - `ENTITY_IDENTIFIER` - identifier of the target entity.
 
@@ -47,10 +51,12 @@ The `get-entity` template gets an existing Port Entity as part of the workflow, 
     template: entity-get
   arguments:
     parameters:
-    - name: PORT_CLIENT_ID
-       value: "YOUR_CLIENT_ID"
-    - name: PORT_CLIENT_SECRET
-      value: "YOUR_CLIENT_SECRET"
+    - name: PORT_CREDENTIALS_SECRET
+       value: "port-credentials"
+    - name: PORT_CLIENT_ID_KEY
+      value: "PORT_CLIENT_ID"
+    - name: PORT_CLIENT_SECRET_KEY
+      value: "PORT_CLIENT_SECRET"
     - name: BLUEPRINT_IDENTIFIER
       value: "microservice" # Replace with your target blueprint identifier
     - name: ENTITY_IDENTIFIER
@@ -65,8 +71,9 @@ The `upsert-entity` template creates or updates an entity with the identifier ma
 
 ### Inputes
 
-- `PORT_CLIENT_ID` - a Port client ID;
-- `PORT_CLIENT_SECRET` - a Port client secret;
+- `PORT_CREDENTIALS_SECRET` - name of the secret to get the `CLIENT_ID` and `CLIENT_SECRET` from (default: `port-credentials`)
+- `PORT_CLIENT_ID_KEY` - key in the secret where the base64 encoded `PORT_CLIENT_ID` is stored (default: `PORT_CLIENT_ID`);
+- `PORT_CLIENT_SECRET_KEY` - key in the secret where the base64 encoded `PORT_CLIENT_SECRET` is stored (default `PORT_CLIENT_SECRET`);
 - `BLUEPRINT_IDENTIFIER` - identifier of the blueprint to create an entity of;
 - `ENTITY_IDENTIFIER` - identifier of the new (or existing) entity. Leave empty to get an auto-generated identifier;
 - `ENTITY_TITLE` - Title of the new (or existing) entity;
@@ -88,10 +95,7 @@ The `upsert-entity` template creates or updates an entity with the identifier ma
     template: entity-upsert
   arguments:
     parameters:
-    - name: PORT_CLIENT_ID
-      value: "YOUR_CLIENT_ID"
-    - name: PORT_CLIENT_SECRET
-      value: "YOUR_CLIENT_SECRET"
+    # If you save the CLIENT_ID and CLIENT_SECRET in the same format shown in the portCredentials.yml file, there is no need to provide PORT_CREDENTIALS_SECRET, PORT_CLIENT_ID_KEY, PORT_CLIENT_SECRET_KEY
     - name: BLUEPRINT_IDENTIFIER
       value: "microservice"
     - name: ENTITY_IDENTIFIER

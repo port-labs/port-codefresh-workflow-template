@@ -12,17 +12,18 @@ spec:
           port/description: "Get a Port Entity according to the provided values"
       inputs:
         parameters:
-          # required
-          - name: PORT_CLIENT_ID
+          - name: PORT_CREDENTIALS_SECRET
+            default: port-credentials
+          - name: PORT_CLIENT_ID_KEY
             default: PORT_CLIENT_ID
-          - name: PORT_CLIENT_SECRET
+          - name: PORT_CLIENT_SECRET_KEY
             default: PORT_CLIENT_SECRET
           - name: BLUEPRINT_IDENTIFIER
           - name: ENTITY_IDENTIFIER
       container:
         name: main
         imagePullPolicy: Always
-        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:latest
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.0.0
         command:
           - node
           - lib/index.js
@@ -30,9 +31,15 @@ spec:
           - name: OPERATION
             value: "get"
           - name: PORT_CLIENT_ID
-            value: "{{ inputs.parameters.PORT_CLIENT_ID }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ inputs.parameters.PORT_CREDENTIALS_SECRET }}"
+                key: "{{ inputs.parameters.PORT_CLIENT_ID_KEY }}"
           - name: PORT_CLIENT_SECRET
-            value: "{{ inputs.parameters.PORT_CLIENT_SECRET }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ inputs.parameters.PORT_CREDENTIALS_SECRET }}"
+                key: "{{ inputs.parameters.PORT_CLIENT_SECRET_KEY }}"
           - name: BLUEPRINT_IDENTIFIER
             value: "{{ inputs.parameters.BLUEPRINT_IDENTIFIER }}"
           - name: ENTITY_IDENTIFIER
@@ -70,9 +77,12 @@ spec:
           port/description: "Upsert a Port Entity according to the provided values"
       inputs:
         parameters:
-          # required
-          - name: PORT_CLIENT_ID
-          - name: PORT_CLIENT_SECRET
+          - name: PORT_CREDENTIALS_SECRET
+            default: port-credentials
+          - name: PORT_CLIENT_ID_KEY
+            default: PORT_CLIENT_ID
+          - name: PORT_CLIENT_SECRET_KEY
+            default: PORT_CLIENT_SECRET
           - name: BLUEPRINT_IDENTIFIER
           - name: ENTITY_IDENTIFIER
             default: ""
@@ -89,7 +99,7 @@ spec:
       container:
         name: main
         imagePullPolicy: Always
-        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:latest
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.0.0
         command:
           - node
           - lib/index.js
@@ -97,9 +107,15 @@ spec:
           - name: OPERATION
             value: "upsert"
           - name: PORT_CLIENT_ID
-            value: "{{ inputs.parameters.PORT_CLIENT_ID }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ inputs.parameters.PORT_CREDENTIALS_SECRET }}"
+                key: "{{ inputs.parameters.PORT_CLIENT_ID_KEY }}"
           - name: PORT_CLIENT_SECRET
-            value: "{{ inputs.parameters.PORT_CLIENT_SECRET }}"
+            valueFrom:
+              secretKeyRef:
+                name: "{{ inputs.parameters.PORT_CREDENTIALS_SECRET }}"
+                key: "{{ inputs.parameters.PORT_CLIENT_SECRET_KEY }}"
           - name: BLUEPRINT_IDENTIFIER
             value: "{{ inputs.parameters.BLUEPRINT_IDENTIFIER }}"
           - name: ENTITY_IDENTIFIER
