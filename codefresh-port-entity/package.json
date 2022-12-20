@@ -1,5 +1,5 @@
 {
-	"name": "codefresh-port-entity-get",
+	"name": "codefresh-port-entity",
 	"version": "1.0.0",
 	"main": "lib/index.js",
 	"private": true,
