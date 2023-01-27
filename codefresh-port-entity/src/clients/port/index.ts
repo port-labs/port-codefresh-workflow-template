@@ -4,7 +4,7 @@ import getEntity from './getEntity';
 import getToken from './getToken';
 import upsertEntity from './upsertEntity';
 
-const USER_AGENT = 'codefresh-workflow/v1.0';
+const USER_AGENT = 'codefresh-workflow/v1.1.0';
 const axget = axios.get;
 const axpost = axios.post;
 const axput = axios.put;

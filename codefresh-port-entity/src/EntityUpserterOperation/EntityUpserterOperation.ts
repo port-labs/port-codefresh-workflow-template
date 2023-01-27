@@ -12,7 +12,7 @@ export default class EntityUpserterOperation {
 			...(this.input.title && { title: this.input.title }),
 			blueprint: this.input?.blueprint,
 			properties: this.input.properties?.length ? JSON.parse(this.input.properties.join('')) : {},
-			...(this.input.team && { team: this.input.team }),
+			team: this.input.team?.length && this.input.team.length > 0 ? JSON.parse(this.input.team as string) : undefined,
 			relations: this.input.relations?.length ? JSON.parse(this.input.relations.join('')) : {},
 			...(this.input.icon && { icon: this.input.icon }),
 		};
