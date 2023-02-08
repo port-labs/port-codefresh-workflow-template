@@ -23,7 +23,7 @@ spec:
       container:
         name: main
         imagePullPolicy: Always
-        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.0.0
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.1.0
         command:
           - node
           - lib/index.js
@@ -99,7 +99,7 @@ spec:
       container:
         name: main
         imagePullPolicy: Always
-        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.0.0
+        image: public.ecr.aws/y8q1v8m0/codefresh-port-entity:1.1.0
         command:
           - node
           - lib/index.js

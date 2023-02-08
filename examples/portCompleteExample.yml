@@ -31,7 +31,7 @@ spec:
                 - name: ENTITY_TITLE
                   value: "Morp-Argo-complete"
                 - name: ENTITY_TEAM
-                  value: "argo-admins"
+                  value: '["argo-admins"]'
                 - name: ENTITY_PROPERTIES
                   value: |
                     {

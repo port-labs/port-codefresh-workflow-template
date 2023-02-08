@@ -3,6 +3,7 @@ import EntityUpserterOperation from './EntityUpserterOperation/EntityUpserterOpe
 import OutputsWriter from './OutputsWriter/OutputsWriter';
 import API_BASE_URL from './consts';
 import { OperationType, WorkflowGetInput, WorkflowUpsertInput } from './types';
+import parseTeamInput from './utils';
 
 async function run(): Promise<void> {
 	try {
@@ -62,11 +63,13 @@ async function handleEntityUpsert(): Promise<void> {
 		blueprint: process.env.BLUEPRINT_IDENTIFIER,
 		identifier: process.env.ENTITY_IDENTIFIER === '' ? undefined : process.env.ENTITY_IDENTIFIER,
 		title: process.env.ENTITY_TITLE === '' ? undefined : process.env.ENTITY_TITLE,
-		team: process.env.ENTITY_TEAM === '' ? undefined : process.env.ENTITY_TEAM,
 		properties: process.env.ENTITY_PROPERTIES === '' ? ['{', '}'] : process.env.ENTITY_PROPERTIES?.split('\n'),
 		relations: process.env.ENTITY_RELATIONS === '' ? ['{', '}'] : process.env.ENTITY_RELATIONS?.split('\n'),
 		icon: process.env.ENTITY_ICON === '' ? undefined : process.env.ENTITY_ICON,
 	};
+	if (process.env.ENTITY_TEAM) {
+		input.team = parseTeamInput(process.env.ENTITY_TEAM);
+	}
 	const operation = new EntityUpserterOperation(input);
 	const output = await operation.execute();
 	const outputsWriter = new OutputsWriter(OperationType.Upsert, output, '/tmp/portvars');

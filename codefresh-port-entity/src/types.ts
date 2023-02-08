@@ -6,7 +6,7 @@ export type Entity = {
 	title?: string;
 	blueprint: string;
 	properties: EntityProperties;
-	team?: string;
+	team?: string[];
 	relations?: EntityRelations;
 };
 
@@ -20,7 +20,7 @@ export type EntityToUpsert = {
 	title?: string;
 	blueprint: string;
 	properties: EntityProperties;
-	team?: string;
+	team?: string | string[];
 	relations?: EntityRelations;
 	icon?: string;
 };
@@ -47,7 +47,7 @@ export type WorkflowUpsertInput = WorkflowBaseInput & {
 	blueprint: string;
 	title?: string;
 	properties?: string[];
-	team?: string;
+	team?: string | string[];
 	relations?: string[];
 	icon?: string;
 };
