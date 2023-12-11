@@ -1,9 +1,12 @@
 import EntityGetterOperation from './EntityGetterOperation/EntityGetterOperation';
 import EntityUpserterOperation from './EntityUpserterOperation/EntityUpserterOperation';
 import OutputsWriter from './OutputsWriter/OutputsWriter';
-import API_BASE_URL from './consts';
 import { OperationType, WorkflowGetInput, WorkflowUpsertInput } from './types';
 import parseTeamInput from './utils';
+
+function getPortApiBaseUrl() {
+	return process.env.API_BASE_URL || 'https://api.getport.io'
+}
 
 async function run(): Promise<void> {
 	try {
@@ -37,7 +40,7 @@ async function handleEntityGet(): Promise<void> {
 	}
 
 	const input: WorkflowGetInput = {
-		baseUrl: API_BASE_URL,
+		baseUrl: getPortApiBaseUrl(),
 		clientId: process.env.PORT_CLIENT_ID,
 		clientSecret: process.env.PORT_CLIENT_SECRET,
 		blueprint: process.env.BLUEPRINT_IDENTIFIER,
@@ -57,7 +60,7 @@ async function handleEntityUpsert(): Promise<void> {
 
 	// Optional fields - identifier, title, team, properties, relations, icon
 	const input: WorkflowUpsertInput = {
-		baseUrl: API_BASE_URL,
+		baseUrl: getPortApiBaseUrl(),
 		clientId: process.env.PORT_CLIENT_ID,
 		clientSecret: process.env.PORT_CLIENT_SECRET,
 		blueprint: process.env.BLUEPRINT_IDENTIFIER,
