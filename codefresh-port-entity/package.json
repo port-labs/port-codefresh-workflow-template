@@ -18,7 +18,7 @@
 		"build-tag-deploy": "npm run build-image && npm run docker-tag-latest && npm run docker-tag-version && npm run docker-push-version && npm run docker-push-latest"
 	},
 	"dependencies": {
-		"axios": "^1.2.1"
+		"axios": "^1.18.0"
 	},
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^4.0.0",
